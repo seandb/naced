@@ -7,7 +7,7 @@ export default defineConfig({
   name: 'naced',
   title: 'NACED Studio',
 
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: 'c6lf00mx',
   dataset: 'production',
 
   plugins: [

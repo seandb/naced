@@ -1,7 +1,7 @@
 // CJS format required by Sanity CLI
 module.exports = {
   api: {
-    projectId: 'YOUR_PROJECT_ID',
+    projectId: 'c6lf00mx',
     dataset: 'production',
   },
 };
