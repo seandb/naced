@@ -8,6 +8,7 @@ export default {
       title: 'Hero Section',
       type: 'object',
       fields: [
+        { name: 'eyebrow', title: 'Eyebrow Text', type: 'string', description: 'Small text above the heading, e.g. "Making an Impact Since 2010"' },
         { name: 'heading', title: 'Heading', type: 'string' },
         { name: 'subheading', title: 'Subheading', type: 'text', rows: 2 },
         {

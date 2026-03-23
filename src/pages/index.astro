@@ -70,7 +70,7 @@ const displayPosts = (posts && posts.length > 0) ? posts : fallbackPosts;
     imageUrl={hero?.image ? urlFor(hero.image).width(1920).height(1080).url() : undefined}
     primaryCta={hero?.primaryCta || { label: 'Explore Our Programs', href: '/programs' }}
     secondaryCta={hero?.secondaryCta || { label: 'Our Impact Story', href: '/about' }}
-    eyebrow="Making an Impact Since 2010"
+    eyebrow={hero?.eyebrow || 'Making an Impact Since 2010'}
   />
 
   <!-- Impact Stats -->
