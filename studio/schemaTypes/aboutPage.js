@@ -4,6 +4,21 @@ export default {
   type: 'document',
   fields: [
     {
+      name: 'pageHeader',
+      title: 'Page Header',
+      type: 'object',
+      fields: [
+        { name: 'eyebrow', title: 'Eyebrow Text', type: 'string' },
+        { name: 'heading', title: 'Heading', type: 'string' },
+        { name: 'subheading', title: 'Subheading', type: 'text', rows: 2 },
+      ],
+    },
+    {
+      name: 'historyHeading',
+      title: 'History Section Heading',
+      type: 'string',
+    },
+    {
       name: 'mission',
       title: 'Mission Statement',
       type: 'text',

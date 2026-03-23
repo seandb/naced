@@ -23,7 +23,9 @@ const siteSettings = {
     email: 'info@naced.org',
     phone: '(312) 555-0192',
     address: '150 N. Michigan Ave, Suite 2800\nChicago, IL 60601',
+    hours: 'Mon – Fri, 9am – 5pm CT',
   },
+  ein: '00-0000000',
   socialLinks: {
     twitter: 'https://twitter.com/nacedorg',
     linkedin: 'https://linkedin.com/company/naced',
@@ -42,11 +44,20 @@ const homePage = {
     primaryCta: { label: 'Explore Our Programs', href: '/programs' },
     secondaryCta: { label: 'Our Impact Story', href: '/about' },
   },
+  missionTeaser: {
+    heading: 'We believe creativity is an economic engine, not just an amenity.',
+    body1: 'For fifteen years, NACED has been at the intersection of arts and economics — helping communities recognize, develop, and sustain the creative assets that make them unique and economically resilient.',
+    body2: 'From small-town cultural districts to urban maker hubs, we provide the research, training, and funding that turns creative potential into lasting prosperity.',
+    ctaLabel: 'Learn about our story',
+    testimonialQuote: 'NACED\'s accelerator gave me the language and tools to talk to investors and city officials about what I was already doing intuitively. It changed everything.',
+    testimonialName: 'Tanya Williams',
+    testimonialTitle: 'Ceramic artist & studio owner, Detroit',
+  },
   impactStats: [
-    { _key: 'stat1', label: 'Communities Served', value: '48', icon: '🏙️' },
-    { _key: 'stat2', label: 'Creative Entrepreneurs Supported', value: '1,200+', icon: '🎨' },
-    { _key: 'stat3', label: 'Grants Awarded', value: '$4.2M', icon: '💰' },
-    { _key: 'stat4', label: 'Years of Impact', value: '15', icon: '📅' },
+    { _key: 'stat1', number: '48', label: 'Communities Served' },
+    { _key: 'stat2', number: '1,200+', label: 'Creative Entrepreneurs Supported' },
+    { _key: 'stat3', number: '$4.2M', label: 'Grants Awarded' },
+    { _key: 'stat4', number: '15 yrs', label: 'Advancing Creative Economies' },
   ],
 };
 
@@ -54,6 +65,12 @@ const homePage = {
 const aboutPage = {
   _id: 'aboutPage',
   _type: 'aboutPage',
+  pageHeader: {
+    eyebrow: 'Who We Are',
+    heading: 'About NACED',
+    subheading: 'We believe every community has untapped creative potential. Our job is to help unlock it.',
+  },
+  historyHeading: '15 Years of Building Creative Futures',
   mission: 'NACED advances creative economic development by equipping artists, makers, and cultural organizations with the resources, knowledge, and networks they need to build sustainable creative enterprises — and by helping communities recognize and invest in the creative assets that drive economic resilience.',
   vision: 'A nation where creativity is understood, valued, and invested in as a driver of economic vitality — where every community has access to the creative infrastructure it needs to thrive.',
   values: [
@@ -69,6 +86,36 @@ const aboutPage = {
     { _key: 'tm4', name: 'James Okafor', title: 'Development Director', bio: 'James has raised over $15M for mission-driven organizations and believes deeply in the power of storytelling to move donors to action.' },
     { _key: 'tm5', name: 'Priya Nair', title: 'Communications Manager', bio: 'Priya shapes how NACED\'s story reaches the world, with a background in journalism and digital strategy for advocacy organizations.' },
     { _key: 'tm6', name: 'Luis Morales', title: 'Program Officer, Grants', bio: 'Luis manages our grantmaking portfolio, working directly with artist-entrepreneurs and cultural organizations across our 48 communities.' },
+  ],
+};
+
+// ─── Contact Page ─────────────────────────────────────────────────────────────
+const contactPage = {
+  _id: 'contactPage',
+  _type: 'contactPage',
+  pageHeader: {
+    eyebrow: 'Get in Touch',
+    heading: 'Contact NACED',
+    subheading: 'Whether you\'re a creative entrepreneur, community leader, potential partner, or supporter — we want to hear from you.',
+  },
+};
+
+// ─── Donate Page ──────────────────────────────────────────────────────────────
+const donatePage = {
+  _id: 'donatePage',
+  _type: 'donatePage',
+  pageHeader: {
+    eyebrow: 'Make an Impact',
+    heading: 'Give Creativity a Chance',
+    subheading: 'Your gift powers the programs, people, and communities at the heart of America\'s creative economy. NACED is a 501(c)(3) nonprofit — your donation is fully tax-deductible.',
+  },
+  impactLevels: [
+    { _key: 'il1', amount: '$25', label: 'Starter Kit', description: 'Covers the cost of business materials for one creative entrepreneur in our accelerator program.' },
+    { _key: 'il2', amount: '$100', label: 'Workshop Seat', description: 'Sponsors one artist\'s attendance at a full-day skills workshop, including meals and materials.' },
+    { _key: 'il3', amount: '$500', label: 'Micro-Grant', description: 'Funds a seed micro-grant for a community creative placemaking project in an underserved neighborhood.' },
+    { _key: 'il4', amount: '$1,000', label: 'Community Leader', description: 'Supports a full year of NACED membership and resources for one creative entrepreneur.' },
+    { _key: 'il5', amount: '$5,000', label: 'Program Champion', description: 'Co-funds a community cohort of the Accelerator program — 10 artists, 12 weeks, life-changing results.' },
+    { _key: 'il6', amount: 'Custom', label: 'Your Amount', description: 'Every dollar matters. Give whatever amount feels right for you.' },
   ],
 };
 
@@ -288,7 +335,7 @@ async function seed() {
     process.exit(1);
   }
 
-  const docs = [siteSettings, homePage, aboutPage, ...programs, ...events, ...posts];
+  const docs = [siteSettings, homePage, aboutPage, contactPage, donatePage, ...programs, ...events, ...posts];
   console.log(`Seeding ${docs.length} documents to Sanity project c6lf00mx...`);
 
   for (const doc of docs) {

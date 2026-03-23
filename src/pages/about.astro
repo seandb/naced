@@ -5,7 +5,7 @@ import { sanityFetch, urlFor } from '../lib/sanity';
 import { toHTML } from '@portabletext/to-html';
 
 const data = await sanityFetch<any>(`*[_type == "aboutPage"][0]{
-  mission, vision, values, history, team, seo
+  pageHeader, historyHeading, mission, vision, values, history, team, seo
 }`);
 
 const historyHtml = data?.history ? toHTML(data.history) : null;
@@ -39,12 +39,12 @@ const displayTeam = data?.team?.length > 0 ? data.team : fallbackTeam;
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
         <div class="w-8 h-px" style="background-color: #D4A853;"></div>
-        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Who We Are</span>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">{data?.pageHeader?.eyebrow || 'Who We Are'}</span>
         <div class="w-8 h-px" style="background-color: #D4A853;"></div>
       </div>
-      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">About NACED</h1>
+      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">{data?.pageHeader?.heading || 'About NACED'}</h1>
       <p class="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
-        We believe every community has untapped creative potential. Our job is to help unlock it.
+        {data?.pageHeader?.subheading || 'We believe every community has untapped creative potential. Our job is to help unlock it.'}
       </p>
     </div>
   </div>
@@ -107,7 +107,7 @@ const displayTeam = data?.team?.length > 0 ? data.team : fallbackTeam;
           <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Our Story</span>
           <div class="w-8 h-px" style="background-color: #D4A853;"></div>
         </div>
-        <h2 class="font-heading text-4xl font-bold" style="color: #1A1A2E;">15 Years of Building Creative Futures</h2>
+        <h2 class="font-heading text-4xl font-bold" style="color: #1A1A2E;">{data?.historyHeading || '15 Years of Building Creative Futures'}</h2>
       </div>
 
       {historyHtml ? (

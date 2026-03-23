@@ -38,6 +38,20 @@ export default {
       ],
     },
     {
+      name: 'missionTeaser',
+      title: 'Mission Teaser Section',
+      type: 'object',
+      fields: [
+        { name: 'heading', title: 'Heading', type: 'string' },
+        { name: 'body1', title: 'Body Paragraph 1', type: 'text', rows: 3 },
+        { name: 'body2', title: 'Body Paragraph 2', type: 'text', rows: 3 },
+        { name: 'ctaLabel', title: 'CTA Link Label', type: 'string' },
+        { name: 'testimonialQuote', title: 'Testimonial Quote', type: 'text', rows: 3 },
+        { name: 'testimonialName', title: 'Testimonial Author Name', type: 'string' },
+        { name: 'testimonialTitle', title: 'Testimonial Author Title', type: 'string' },
+      ],
+    },
+    {
       name: 'impactStats',
       title: 'Impact Stats',
       type: 'array',

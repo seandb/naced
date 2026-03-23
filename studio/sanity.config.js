@@ -40,6 +40,22 @@ export default defineConfig({
                   .schemaType('aboutPage')
                   .documentId('aboutPage')
               ),
+            S.listItem()
+              .title('Contact Page')
+              .id('contactPage')
+              .child(
+                S.document()
+                  .schemaType('contactPage')
+                  .documentId('contactPage')
+              ),
+            S.listItem()
+              .title('Donate Page')
+              .id('donatePage')
+              .child(
+                S.document()
+                  .schemaType('donatePage')
+                  .documentId('donatePage')
+              ),
             S.divider(),
             S.documentTypeListItem('program').title('Programs'),
             S.documentTypeListItem('event').title('Events'),

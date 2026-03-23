@@ -64,7 +64,19 @@ export default {
         { name: 'email', title: 'Email', type: 'string' },
         { name: 'phone', title: 'Phone', type: 'string' },
         { name: 'address', title: 'Address', type: 'text', rows: 3 },
+        { name: 'hours', title: 'Office Hours', type: 'string' },
       ],
+    },
+    {
+      name: 'ein',
+      title: 'EIN Number',
+      type: 'string',
+      description: 'e.g. 12-3456789',
+    },
+    {
+      name: 'annualReportsUrl',
+      title: 'Annual Reports URL',
+      type: 'url',
     },
     {
       name: 'zeffyDonationUrl',

@@ -2,10 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 import { sanityFetch } from '../lib/sanity';
 
-const settings = await sanityFetch<any>(`*[_type == "siteSettings"][0]{ zeffyDonationUrl }`);
-const zeffyUrl = settings?.zeffyDonationUrl || null;
+const settings = await sanityFetch<any>(`*[_type == "siteSettings"][0]{ zeffyDonationUrl, ein, annualReportsUrl, contactInfo }`);
+const donateData = await sanityFetch<any>(`*[_type == "donatePage"][0]{ pageHeader, impactLevels }`);
 
-const impactLevels = [
+const zeffyUrl = settings?.zeffyDonationUrl || null;
+const ein = settings?.ein || '00-0000000';
+const annualReportsUrl = settings?.annualReportsUrl || '#';
+const mailAddress = settings?.contactInfo?.address || '150 N. Michigan Ave, Suite 2800, Chicago, IL 60601';
+
+const fallbackImpactLevels = [
   { amount: '$25', label: 'Starter Kit', description: 'Covers the cost of business materials for one creative entrepreneur in our accelerator program.' },
   { amount: '$100', label: 'Workshop Seat', description: 'Sponsors one artist\'s attendance at a full-day skills workshop, including meals and materials.' },
   { amount: '$500', label: 'Micro-Grant', description: 'Funds a seed micro-grant for a community creative placemaking project in an underserved neighborhood.' },
@@ -13,6 +18,7 @@ const impactLevels = [
   { amount: '$5,000', label: 'Program Champion', description: 'Co-funds a community cohort of the Accelerator program — 10 artists, 12 weeks, life-changing results.' },
   { amount: 'Custom', label: 'Your Amount', description: 'Every dollar matters. Give whatever amount feels right for you.' },
 ];
+const impactLevels = donateData?.impactLevels?.length > 0 ? donateData.impactLevels : fallbackImpactLevels;
 ---
 
 <Layout
@@ -25,12 +31,12 @@ const impactLevels = [
     <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
         <div class="w-8 h-px" style="background-color: #D4A853;"></div>
-        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Make an Impact</span>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">{donateData?.pageHeader?.eyebrow || 'Make an Impact'}</span>
         <div class="w-8 h-px" style="background-color: #D4A853;"></div>
       </div>
-      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">Give Creativity a Chance</h1>
+      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">{donateData?.pageHeader?.heading || 'Give Creativity a Chance'}</h1>
       <p class="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
-        Your gift powers the programs, people, and communities at the heart of America's creative economy. NACED is a 501(c)(3) nonprofit — your donation is fully tax-deductible.
+        {donateData?.pageHeader?.subheading || 'Your gift powers the programs, people, and communities at the heart of America\'s creative economy. NACED is a 501(c)(3) nonprofit — your donation is fully tax-deductible.'}
       </p>
     </div>
   </div>
@@ -126,8 +132,8 @@ const impactLevels = [
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <div class="text-3xl mb-3" aria-hidden="true">🎁</div>
           <h3 class="font-heading text-xl font-bold mb-2" style="color: #1A1A2E;">Donate by Mail</h3>
-          <p class="text-sm text-gray-600 leading-relaxed mb-4">Make checks payable to <strong>NACED</strong> and mail to: 123 Creative Commons Dr, Suite 200, Chicago, IL 60601.</p>
-          <p class="text-xs text-gray-400">EIN: 00-0000000</p>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">Make checks payable to <strong>NACED</strong> and mail to: {mailAddress}.</p>
+          <p class="text-xs text-gray-400">EIN: {ein}</p>
         </div>
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <div class="text-3xl mb-3" aria-hidden="true">🔄</div>
@@ -144,7 +150,7 @@ const impactLevels = [
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <p class="text-sm text-gray-500 leading-relaxed">
         NACED is a 501(c)(3) nonprofit organization. All donations are tax-deductible to the fullest extent permitted by law.
-        Our EIN is 00-0000000. We are committed to full financial transparency — view our <a href="#" class="underline" style="color: #0D5C63;">annual reports and 990s</a>.
+        Our EIN is {ein}. We are committed to full financial transparency — view our <a href={annualReportsUrl} class="underline" style="color: #0D5C63;">annual reports and 990s</a>.
       </p>
     </div>
   </div>

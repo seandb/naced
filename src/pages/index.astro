@@ -11,6 +11,7 @@ import { sanityFetch, urlFor } from '../lib/sanity';
 // Fetch homepage data
 const homeData = await sanityFetch<any>(`*[_type == "homePage"][0]{
   hero,
+  missionTeaser,
   impactStats,
   "featuredPrograms": featuredPrograms[]->{
     _id, title, slug, tagline, icon, image, "description": pt::text(description)
@@ -32,6 +33,7 @@ const posts = await sanityFetch<any[]>(`*[_type == "post"] | order(publishedAt d
 
 // Fallback content
 const hero = homeData?.hero;
+const missionTeaser = homeData?.missionTeaser;
 const stats = homeData?.impactStats;
 const programs = homeData?.featuredPrograms || [];
 const featuredPost = homeData?.featuredPost;
@@ -86,13 +88,13 @@ const displayPosts = (posts && posts.length > 0) ? posts : fallbackPosts;
             <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Our Mission</span>
           </div>
           <h2 class="font-heading font-bold mb-6" style="font-size: clamp(2rem, 3vw, 2.75rem); color: #1A1A2E; line-height: 1.15;">
-            We believe creativity is an <em class="not-italic" style="color: #0D5C63;">economic engine</em>, not just an amenity.
+            {missionTeaser?.heading || 'We believe creativity is an economic engine, not just an amenity.'}
           </h2>
           <p class="text-lg text-gray-600 leading-relaxed mb-6">
-            For fifteen years, NACED has been at the intersection of arts and economics — helping communities recognize, develop, and sustain the creative assets that make them unique and economically resilient.
+            {missionTeaser?.body1 || 'For fifteen years, NACED has been at the intersection of arts and economics — helping communities recognize, develop, and sustain the creative assets that make them unique and economically resilient.'}
           </p>
           <p class="text-gray-600 leading-relaxed mb-8">
-            From small-town cultural districts to urban maker hubs, we provide the research, training, and funding that turns creative potential into lasting prosperity.
+            {missionTeaser?.body2 || 'From small-town cultural districts to urban maker hubs, we provide the research, training, and funding that turns creative potential into lasting prosperity.'}
           </p>
           <a
             href="/about"
@@ -112,15 +114,15 @@ const displayPosts = (posts && posts.length > 0) ? posts : fallbackPosts;
               <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
             </svg>
             <p class="font-heading text-xl font-semibold leading-relaxed mb-6" style="color: #1A1A2E;">
-              "NACED's accelerator gave me the language and tools to talk to investors and city officials about what I was already doing intuitively. It changed everything."
+              "{missionTeaser?.testimonialQuote || 'NACED\'s accelerator gave me the language and tools to talk to investors and city officials about what I was already doing intuitively. It changed everything.'}"
             </p>
             <footer class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-heading font-bold" style="background-color: #0D5C63;">
-                T
+                {(missionTeaser?.testimonialName || 'Tanya Williams').charAt(0)}
               </div>
               <div>
-                <div class="font-semibold text-sm" style="color: #1A1A2E;">Tanya Williams</div>
-                <div class="text-xs text-gray-500">Ceramic artist & studio owner, Detroit</div>
+                <div class="font-semibold text-sm" style="color: #1A1A2E;">{missionTeaser?.testimonialName || 'Tanya Williams'}</div>
+                <div class="text-xs text-gray-500">{missionTeaser?.testimonialTitle || 'Ceramic artist & studio owner, Detroit'}</div>
               </div>
             </footer>
           </blockquote>
