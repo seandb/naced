@@ -43,10 +43,10 @@ const homePage = {
     secondaryCta: { label: 'Our Impact Story', href: '/about' },
   },
   impactStats: [
-    { label: 'Communities Served', value: '48', icon: '🏙️' },
-    { label: 'Creative Entrepreneurs Supported', value: '1,200+', icon: '🎨' },
-    { label: 'Grants Awarded', value: '$4.2M', icon: '💰' },
-    { label: 'Years of Impact', value: '15', icon: '📅' },
+    { _key: 'stat1', label: 'Communities Served', value: '48', icon: '🏙️' },
+    { _key: 'stat2', label: 'Creative Entrepreneurs Supported', value: '1,200+', icon: '🎨' },
+    { _key: 'stat3', label: 'Grants Awarded', value: '$4.2M', icon: '💰' },
+    { _key: 'stat4', label: 'Years of Impact', value: '15', icon: '📅' },
   ],
 };
 
@@ -57,18 +57,18 @@ const aboutPage = {
   mission: 'NACED advances creative economic development by equipping artists, makers, and cultural organizations with the resources, knowledge, and networks they need to build sustainable creative enterprises — and by helping communities recognize and invest in the creative assets that drive economic resilience.',
   vision: 'A nation where creativity is understood, valued, and invested in as a driver of economic vitality — where every community has access to the creative infrastructure it needs to thrive.',
   values: [
-    { title: 'Equity', description: 'We center the voices and needs of artists from under-resourced communities, ensuring our programs reach those who need them most.', icon: '⚖️' },
-    { title: 'Community', description: 'Creative economies are built on relationships. We invest in the networks, trust, and social capital that make local creativity possible.', icon: '🤝' },
-    { title: 'Innovation', description: 'We embrace new models, partnerships, and ideas — learning from every community we work with to continuously improve our approach.', icon: '💡' },
-    { title: 'Impact', description: 'We measure what matters. Every program we run is evaluated against real outcomes for artists, communities, and local economies.', icon: '📈' },
+    { _key: 'val1', title: 'Equity', description: 'We center the voices and needs of artists from under-resourced communities, ensuring our programs reach those who need them most.', icon: '⚖️' },
+    { _key: 'val2', title: 'Community', description: 'Creative economies are built on relationships. We invest in the networks, trust, and social capital that make local creativity possible.', icon: '🤝' },
+    { _key: 'val3', title: 'Innovation', description: 'We embrace new models, partnerships, and ideas — learning from every community we work with to continuously improve our approach.', icon: '💡' },
+    { _key: 'val4', title: 'Impact', description: 'We measure what matters. Every program we run is evaluated against real outcomes for artists, communities, and local economies.', icon: '📈' },
   ],
   team: [
-    { name: 'Dr. Amara Johnson', title: 'Executive Director', bio: 'Former urban planner and practicing sculptor, Amara has spent 20 years at the intersection of arts policy and economic development.' },
-    { name: 'Marcus Rivera', title: 'Director of Programs', bio: 'Marcus brings 12 years of nonprofit leadership and a background in community organizing to NACED\'s program design and delivery.' },
-    { name: 'Dr. Sarah Kim', title: 'Research Director', bio: 'An economist specializing in cultural industries, Sarah leads NACED\'s signature research on the economic returns of creative investment.' },
-    { name: 'James Okafor', title: 'Development Director', bio: 'James has raised over $15M for mission-driven organizations and believes deeply in the power of storytelling to move donors to action.' },
-    { name: 'Priya Nair', title: 'Communications Manager', bio: 'Priya shapes how NACED\'s story reaches the world, with a background in journalism and digital strategy for advocacy organizations.' },
-    { name: 'Luis Morales', title: 'Program Officer, Grants', bio: 'Luis manages our grantmaking portfolio, working directly with artist-entrepreneurs and cultural organizations across our 48 communities.' },
+    { _key: 'tm1', name: 'Dr. Amara Johnson', title: 'Executive Director', bio: 'Former urban planner and practicing sculptor, Amara has spent 20 years at the intersection of arts policy and economic development.' },
+    { _key: 'tm2', name: 'Marcus Rivera', title: 'Director of Programs', bio: 'Marcus brings 12 years of nonprofit leadership and a background in community organizing to NACED\'s program design and delivery.' },
+    { _key: 'tm3', name: 'Dr. Sarah Kim', title: 'Research Director', bio: 'An economist specializing in cultural industries, Sarah leads NACED\'s signature research on the economic returns of creative investment.' },
+    { _key: 'tm4', name: 'James Okafor', title: 'Development Director', bio: 'James has raised over $15M for mission-driven organizations and believes deeply in the power of storytelling to move donors to action.' },
+    { _key: 'tm5', name: 'Priya Nair', title: 'Communications Manager', bio: 'Priya shapes how NACED\'s story reaches the world, with a background in journalism and digital strategy for advocacy organizations.' },
+    { _key: 'tm6', name: 'Luis Morales', title: 'Program Officer, Grants', bio: 'Luis manages our grantmaking portfolio, working directly with artist-entrepreneurs and cultural organizations across our 48 communities.' },
   ],
 };
 
