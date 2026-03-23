@@ -1,0 +1,92 @@
+---
+interface Props {
+  heading?: string;
+  subheading?: string;
+  imageUrl?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  eyebrow?: string;
+}
+
+const {
+  heading = 'Fueling Creative Economies Across America',
+  subheading = 'NACED brings together artists, entrepreneurs, policymakers, and community leaders to build thriving local economies powered by creativity and culture.',
+  imageUrl,
+  primaryCta = { label: 'Explore Our Programs', href: '/programs' },
+  secondaryCta = { label: 'Our Impact Story', href: '/about' },
+  eyebrow,
+} = Astro.props;
+
+const bgStyle = imageUrl
+  ? `background-image: linear-gradient(to bottom, rgba(10,40,45,0.78) 0%, rgba(10,40,45,0.6) 60%, rgba(10,40,45,0.85) 100%), url(${imageUrl}); background-size: cover; background-position: center;`
+  : 'background: linear-gradient(135deg, #0D5C63 0%, #094A50 40%, #1A1A2E 100%);';
+---
+
+<section
+  class="relative min-h-[90vh] flex items-center overflow-hidden"
+  style={bgStyle}
+  aria-label="Hero section"
+>
+  <!-- Decorative pattern overlay -->
+  <div class="absolute inset-0 opacity-5" aria-hidden="true">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#hero-grid)" />
+    </svg>
+  </div>
+
+  <!-- Gold accent bar at top -->
+  <div class="absolute top-0 left-0 right-0 h-1" style="background: linear-gradient(90deg, #D4A853, #E8C47A, #D4A853);" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div class="max-w-4xl">
+
+      {eyebrow && (
+        <div class="inline-flex items-center gap-2 mb-6">
+          <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">{eyebrow}</span>
+        </div>
+      )}
+
+      <h1 class="font-heading font-bold text-white leading-tight mb-6"
+          style="font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1.05; letter-spacing: -0.02em;">
+        {heading}
+      </h1>
+
+      <p class="text-xl sm:text-2xl text-gray-200 leading-relaxed mb-10 max-w-2xl font-light">
+        {subheading}
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a
+          href={primaryCta.href}
+          class="inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-base transition-all duration-200 hover:scale-105 hover:shadow-xl"
+          style="background-color: #D4A853; color: #1A1A2E;"
+        >
+          {primaryCta.label}
+          <svg class="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+        <a
+          href={secondaryCta.href}
+          class="inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-base border-2 border-white/40 text-white hover:border-white hover:bg-white/10 transition-all duration-200"
+        >
+          {secondaryCta.label}
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 animate-bounce" aria-hidden="true">
+    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+</section>

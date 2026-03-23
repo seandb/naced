@@ -1,0 +1,194 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CTABanner from '../components/CTABanner.astro';
+import { sanityFetch, urlFor } from '../lib/sanity';
+import { toHTML } from '@portabletext/to-html';
+
+const data = await sanityFetch<any>(`*[_type == "aboutPage"][0]{
+  mission, vision, values, history, team, seo
+}`);
+
+const historyHtml = data?.history ? toHTML(data.history) : null;
+
+const fallbackValues = [
+  { title: 'Equity', description: 'We center the voices and needs of artists from under-resourced communities, ensuring our programs reach those who need them most.', icon: '⚖️' },
+  { title: 'Community', description: 'Creative economies are built on relationships. We invest in the networks, trust, and social capital that make local creativity possible.', icon: '🤝' },
+  { title: 'Innovation', description: 'We embrace new models, partnerships, and ideas — learning from every community we work with to continuously improve our approach.', icon: '💡' },
+  { title: 'Impact', description: 'We measure what matters. Every program we run is evaluated against real outcomes for artists, communities, and local economies.', icon: '📈' },
+];
+
+const fallbackTeam = [
+  { name: 'Dr. Amara Johnson', title: 'Executive Director', bio: 'Former urban planner and practicing sculptor, Amara has spent 20 years at the intersection of arts policy and economic development.' },
+  { name: 'Marcus Rivera', title: 'Director of Programs', bio: 'Marcus brings 12 years of nonprofit leadership and a background in community organizing to NACED\'s program design and delivery.' },
+  { name: 'Dr. Sarah Kim', title: 'Research Director', bio: 'An economist specializing in cultural industries, Sarah leads NACED\'s signature research on the economic returns of creative investment.' },
+  { name: 'James Okafor', title: 'Development Director', bio: 'James has raised over $15M for mission-driven organizations and believes deeply in the power of storytelling to move donors to action.' },
+  { name: 'Priya Nair', title: 'Communications Manager', bio: 'Priya shapes how NACED\'s story reaches the world, with a background in journalism and digital strategy for advocacy organizations.' },
+  { name: 'Luis Morales', title: 'Program Officer, Grants', bio: 'Luis manages our grantmaking portfolio, working directly with artist-entrepreneurs and cultural organizations across our 48 communities.' },
+];
+
+const displayValues = data?.values?.length > 0 ? data.values : fallbackValues;
+const displayTeam = data?.team?.length > 0 ? data.team : fallbackTeam;
+---
+
+<Layout
+  title={data?.seo?.title || 'About — NACED'}
+  description={data?.seo?.description || 'Learn about NACED\'s mission to advance creative economic development, our history, and the team behind our work.'}
+>
+  <!-- Page header -->
+  <div class="py-24 text-white" style="background: linear-gradient(135deg, #0D5C63 0%, #094A50 100%);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Who We Are</span>
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+      </div>
+      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">About NACED</h1>
+      <p class="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
+        We believe every community has untapped creative potential. Our job is to help unlock it.
+      </p>
+    </div>
+  </div>
+
+  <!-- Mission & Vision -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-12">
+        <div class="p-8 rounded-3xl" style="background-color: #F7F9F8;">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5" style="background-color: #0D5C63;">
+            <span role="img" aria-label="Mission icon">🎯</span>
+          </div>
+          <h2 class="font-heading text-2xl font-bold mb-4" style="color: #1A1A2E;">Our Mission</h2>
+          <p class="text-gray-700 leading-relaxed text-lg">
+            {data?.mission || 'NACED advances creative economic development by equipping artists, makers, and cultural organizations with the resources, knowledge, and networks they need to build sustainable creative enterprises — and by helping communities recognize and invest in the creative assets that drive economic resilience.'}
+          </p>
+        </div>
+        <div class="p-8 rounded-3xl" style="background-color: #1A1A2E;">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5" style="background-color: #D4A853;">
+            <span role="img" aria-label="Vision icon">🔭</span>
+          </div>
+          <h2 class="font-heading text-2xl font-bold mb-4 text-white">Our Vision</h2>
+          <p class="text-gray-300 leading-relaxed text-lg">
+            {data?.vision || 'A nation where creativity is understood, valued, and invested in as a driver of economic vitality — where every community has access to the creative infrastructure it needs to thrive.'}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="py-20" style="background-color: #F7F9F8;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-2 mb-4" aria-hidden="true">
+          <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">What Guides Us</span>
+          <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        </div>
+        <h2 class="font-heading text-4xl font-bold" style="color: #1A1A2E;">Our Core Values</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {displayValues.map((value: any) => (
+          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+            <div class="text-3xl mb-4" role="img" aria-label={`${value.title} icon`}>{value.icon || '★'}</div>
+            <h3 class="font-heading text-xl font-bold mb-3" style="color: #0D5C63;">{value.title}</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- History / Story -->
+  <section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 mb-4" aria-hidden="true">
+          <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Our Story</span>
+          <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        </div>
+        <h2 class="font-heading text-4xl font-bold" style="color: #1A1A2E;">15 Years of Building Creative Futures</h2>
+      </div>
+
+      {historyHtml ? (
+        <div class="prose prose-lg max-w-none" set:html={historyHtml} />
+      ) : (
+        <div class="prose prose-lg max-w-none text-gray-700">
+          <p>NACED was founded in 2010 by a group of artists, economists, and urban planners who saw a disconnect: cities were investing heavily in attracting corporations while ignoring the creative entrepreneurs already in their midst.</p>
+          <p>Our first program was a 10-week business accelerator for visual artists in Chicago. Twenty-two artists enrolled. By the end, 18 had viable business plans and access to small business loans. Three years later, 16 were still running their creative businesses.</p>
+          <p>That proof of concept sparked a national conversation. Within five years, NACED had expanded to 12 cities, launched a research division, and began advising municipal governments on cultural master planning.</p>
+          <p>Today, we work across 48 communities, have supported over 1,200 creative entrepreneurs, and our research is cited by city governments and foundations as the standard for understanding creative economic development.</p>
+          <p>We're proud of how far we've come — and acutely aware of how much work remains. The creative economy touches every sector. When it thrives, communities do too.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="py-20" style="background-color: #F7F9F8;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <div class="inline-flex items-center gap-2 mb-4" aria-hidden="true">
+          <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">The People</span>
+          <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        </div>
+        <h2 class="font-heading text-4xl font-bold" style="color: #1A1A2E;">Our Team</h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {displayTeam.map((member: any) => (
+          <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+            <!-- Photo placeholder -->
+            <div class="aspect-square overflow-hidden bg-gradient-to-br from-teal-primary to-teal-dark" style="background: linear-gradient(135deg, #0D5C63, #094A50);">
+              {member.photo ? (
+                <img
+                  src={urlFor(member.photo).width(400).height(400).url()}
+                  alt={member.name}
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div class="w-full h-full flex items-center justify-center">
+                  <span class="font-heading font-bold text-5xl text-white/50">
+                    {member.name.charAt(0)}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div class="p-6">
+              <h3 class="font-heading font-bold text-xl mb-1" style="color: #1A1A2E;">{member.name}</h3>
+              <p class="text-sm font-semibold mb-3" style="color: #0D5C63;">{member.title}</p>
+              {member.bio && <p class="text-sm text-gray-600 leading-relaxed">{member.bio}</p>}
+              {member.linkedin && (
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold transition-colors"
+                  style="color: #0D5C63;"
+                  aria-label={`${member.name} on LinkedIn`}
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  LinkedIn
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Join Our Mission"
+    subtext="Whether you're an artist, a community leader, a funder, or a policymaker — there's a place for you in the NACED network."
+    primaryLabel="Donate"
+    primaryHref="/donate"
+    secondaryLabel="Get in Touch"
+    secondaryHref="/contact"
+  />
+</Layout>

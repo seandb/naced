@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  tagline?: string;
+  description?: string;
+  icon?: string;
+  slug: string;
+  imageUrl?: string;
+}
+
+const { title, tagline, description, icon = '🎨', slug, imageUrl } = Astro.props;
+---
+
+<article class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-transparent flex flex-col">
+  <!-- Image or icon header -->
+  {imageUrl ? (
+    <div class="aspect-video overflow-hidden">
+      <img
+        src={imageUrl}
+        alt={`${title} program`}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  ) : (
+    <div class="aspect-video flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #F7F9F8, #E8F5F6);">
+      <span role="img" aria-label={`${title} icon`}>{icon}</span>
+    </div>
+  )}
+
+  <div class="p-6 flex flex-col flex-1">
+    <h3 class="font-heading text-xl font-bold mb-2 group-hover:text-teal-primary transition-colors" style="color: #1A1A2E;">
+      {title}
+    </h3>
+    {tagline && (
+      <p class="text-sm font-semibold mb-3" style="color: #0D5C63;">{tagline}</p>
+    )}
+    {description && (
+      <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-1">{description}</p>
+    )}
+    <a
+      href={`/programs/${slug}`}
+      class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors group-hover:gap-2.5"
+      style="color: #0D5C63;"
+      aria-label={`Learn more about ${title}`}
+    >
+      Learn more
+      <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  </div>
+</article>

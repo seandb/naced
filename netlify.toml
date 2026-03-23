@@ -1,0 +1,6 @@
+# This site is now hosted on Cloudflare Pages.
+# This file is kept as a placeholder only.
+# Cloudflare Pages config is set in the dashboard:
+#   Build command:  npm run build
+#   Output dir:     dist
+#   Node version:   20 (set via NODE_VERSION env var in dashboard)

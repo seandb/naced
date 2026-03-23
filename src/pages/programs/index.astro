@@ -1,0 +1,97 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProgramCard from '../../components/ProgramCard.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import { sanityFetch, urlFor } from '../../lib/sanity';
+
+const programs = await sanityFetch<any[]>(`*[_type == "program"] | order(order asc, title asc){
+  _id, title, slug, tagline, icon, image, "description": pt::text(description), featured
+}`);
+
+const fallbackPrograms = [
+  { _id: '1', title: 'Creative Entrepreneur Accelerator', tagline: '12-Week Business Intensive', icon: '🚀', slug: { current: 'creative-entrepreneur-accelerator' }, description: 'A 12-week intensive program equipping artists and makers with the business skills to turn their creative practice into a sustainable livelihood. Cohort-based, peer-driven, and deeply practical.', featured: true },
+  { _id: '2', title: 'Community Cultural Planning', tagline: 'Policy & Place', icon: '🏘️', slug: { current: 'community-cultural-planning' }, description: 'We partner with cities and towns to develop cultural master plans that recognize and amplify local creative assets. From asset mapping to policy recommendations.', featured: false },
+  { _id: '3', title: 'Creative Placemaking Grants', tagline: 'Seed Funding for Public Art', icon: '🎭', slug: { current: 'creative-placemaking-grants' }, description: 'Seed funding for public art, cultural districts, and creative reuse projects that transform underutilized spaces into community anchors and economic hubs.', featured: true },
+  { _id: '4', title: 'Rural Creative Economy Initiative', tagline: 'Creativity Beyond the City', icon: '🌾', slug: { current: 'rural-creative-economy' }, description: 'Supporting artists and makers in rural and small-town America — where creative assets are abundant but resources are scarce. Tailored workshops, peer networks, and micro-grants.', featured: false },
+  { _id: '5', title: 'Creative Industries Research', tagline: 'Evidence-Based Advocacy', icon: '📊', slug: { current: 'creative-industries-research' }, description: 'Our research team publishes the definitive annual report on creative economy health across 48 communities. We translate data into advocacy tools for city leaders and funders.', featured: false },
+  { _id: '6', title: 'Youth Creative Leadership', tagline: 'The Next Generation', icon: '🌟', slug: { current: 'youth-creative-leadership' }, description: 'A summer leadership program for high school students interested in arts entrepreneurship, connecting them with mentors, skills, and a vision for their creative futures.', featured: false },
+];
+
+const displayPrograms = programs && programs.length > 0 ? programs : fallbackPrograms;
+const featured = displayPrograms.filter((p: any) => p.featured);
+const others = displayPrograms.filter((p: any) => !p.featured);
+---
+
+<Layout title="Programs — NACED" description="Explore NACED's programs for creative entrepreneurs, communities, and policymakers building thriving creative economies.">
+  <!-- Header -->
+  <div class="py-24 text-white" style="background: linear-gradient(135deg, #0D5C63 0%, #094A50 100%);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">What We Do</span>
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+      </div>
+      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">Our Programs</h1>
+      <p class="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
+        From entrepreneur training to municipal policy, our programs meet communities and creatives where they are — and help them get where they want to go.
+      </p>
+    </div>
+  </div>
+
+  <!-- Featured programs -->
+  {featured.length > 0 && (
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="inline-flex items-center gap-2 mb-8">
+          <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Featured Programs</span>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featured.map((program: any) => (
+            <ProgramCard
+              title={program.title}
+              tagline={program.tagline}
+              description={program.description}
+              icon={program.icon || '🎨'}
+              slug={program.slug?.current || program.slug}
+              imageUrl={program.image ? urlFor(program.image).width(600).height(340).url() : undefined}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- All programs -->
+  <section class={`py-20 ${featured.length > 0 ? '' : 'bg-white'}`} style={featured.length > 0 ? 'background-color: #F7F9F8;' : ''}>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {others.length > 0 && featured.length > 0 && (
+        <div class="inline-flex items-center gap-2 mb-8">
+          <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">More Programs</span>
+        </div>
+      )}
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {(others.length > 0 ? others : (featured.length === 0 ? displayPrograms : [])).map((program: any) => (
+          <ProgramCard
+            title={program.title}
+            tagline={program.tagline}
+            description={program.description}
+            icon={program.icon || '🎨'}
+            slug={program.slug?.current || program.slug}
+            imageUrl={program.image ? urlFor(program.image).width(600).height(340).url() : undefined}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    heading="Interested in Partnering?"
+    subtext="We're always looking for cities, foundations, and organizations who share our vision for creative economic development."
+    primaryLabel="Contact Us"
+    primaryHref="/contact"
+    secondaryLabel="Learn More"
+    secondaryHref="/about"
+  />
+</Layout>

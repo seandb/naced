@@ -1,0 +1,105 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import EventCard from '../../components/EventCard.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import { sanityFetch } from '../../lib/sanity';
+
+const upcomingEvents = await sanityFetch<any[]>(`*[_type == "event" && date > now()] | order(date asc){
+  _id, title, slug, date, endDate, location, category, registrationUrl, featured
+}`);
+
+const pastEvents = await sanityFetch<any[]>(`*[_type == "event" && date <= now()] | order(date desc) [0...6]{
+  _id, title, slug, date, location, category
+}`);
+
+const fallbackUpcoming = [
+  { _id: 'e1', title: 'Creative Economy Summit 2026', date: '2026-05-14T09:00:00Z', location: 'Chicago, IL', category: 'Conference', slug: { current: 'creative-economy-summit-2026' }, registrationUrl: '#', featured: true },
+  { _id: 'e2', title: 'Grant Writing Workshop for Artists', date: '2026-04-08T18:00:00Z', location: 'Online / Zoom', category: 'Workshop', slug: { current: 'grant-writing-workshop' }, registrationUrl: '#', featured: false },
+  { _id: 'e3', title: 'Cultural District Planning Webinar', date: '2026-04-22T14:00:00Z', location: 'Online / Zoom', category: 'Webinar', slug: { current: 'cultural-district-webinar' }, registrationUrl: '#', featured: false },
+  { _id: 'e4', title: 'Detroit Makers Market & Mixer', date: '2026-05-30T16:00:00Z', location: 'Detroit, MI', category: 'Community', slug: { current: 'detroit-makers-market' }, registrationUrl: '#', featured: false },
+];
+
+const displayUpcoming = (upcomingEvents && upcomingEvents.length > 0) ? upcomingEvents : fallbackUpcoming;
+const displayPast = pastEvents || [];
+---
+
+<Layout title="Events — NACED" description="Join NACED at upcoming workshops, conferences, webinars, and community gatherings advancing creative economic development.">
+  <!-- Header -->
+  <div class="py-24 text-white" style="background: linear-gradient(135deg, #0D5C63 0%, #094A50 100%);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Get Engaged</span>
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+      </div>
+      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">Events</h1>
+      <p class="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
+        Connect with the NACED community at workshops, conferences, webinars, and local gatherings across the country.
+      </p>
+    </div>
+  </div>
+
+  <!-- Upcoming events -->
+  <section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="inline-flex items-center gap-2 mb-8">
+        <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Upcoming Events</span>
+      </div>
+
+      {displayUpcoming.length > 0 ? (
+        <div class="space-y-5">
+          {displayUpcoming.map((event: any) => (
+            <EventCard
+              title={event.title}
+              date={event.date}
+              endDate={event.endDate}
+              location={event.location}
+              category={event.category}
+              slug={event.slug?.current || event.slug}
+              registrationUrl={event.registrationUrl}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16 rounded-2xl" style="background-color: #F7F9F8;">
+          <div class="text-5xl mb-4" aria-hidden="true">📅</div>
+          <h2 class="font-heading text-2xl font-bold mb-2" style="color: #1A1A2E;">No upcoming events</h2>
+          <p class="text-gray-600">Check back soon, or <a href="/contact" style="color: #0D5C63;" class="underline">sign up for our newsletter</a> to be the first to know.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Past events (if any) -->
+  {displayPast.length > 0 && (
+    <section class="py-20" style="background-color: #F7F9F8;">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="inline-flex items-center gap-2 mb-8">
+          <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Past Events</span>
+        </div>
+        <div class="space-y-4">
+          {displayPast.map((event: any) => (
+            <EventCard
+              title={event.title}
+              date={event.date}
+              location={event.location}
+              category={event.category}
+              slug={event.slug?.current || event.slug}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CTABanner
+    heading="Host an Event With Us"
+    subtext="Want to bring a NACED workshop or convening to your community? We'd love to talk."
+    primaryLabel="Get in Touch"
+    primaryHref="/contact"
+    secondaryLabel="View Programs"
+    secondaryHref="/programs"
+  />
+</Layout>

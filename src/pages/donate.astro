@@ -1,0 +1,151 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { sanityFetch } from '../lib/sanity';
+
+const settings = await sanityFetch<any>(`*[_type == "siteSettings"][0]{ zeffyDonationUrl }`);
+const zeffyUrl = settings?.zeffyDonationUrl || null;
+
+const impactLevels = [
+  { amount: '$25', label: 'Starter Kit', description: 'Covers the cost of business materials for one creative entrepreneur in our accelerator program.' },
+  { amount: '$100', label: 'Workshop Seat', description: 'Sponsors one artist\'s attendance at a full-day skills workshop, including meals and materials.' },
+  { amount: '$500', label: 'Micro-Grant', description: 'Funds a seed micro-grant for a community creative placemaking project in an underserved neighborhood.' },
+  { amount: '$1,000', label: 'Community Leader', description: 'Supports a full year of NACED membership and resources for one creative entrepreneur.' },
+  { amount: '$5,000', label: 'Program Champion', description: 'Co-funds a community cohort of the Accelerator program — 10 artists, 12 weeks, life-changing results.' },
+  { amount: 'Custom', label: 'Your Amount', description: 'Every dollar matters. Give whatever amount feels right for you.' },
+];
+---
+
+<Layout
+  title="Donate — NACED"
+  description="Support NACED's mission to advance creative economic development. Your gift empowers artists, transforms communities, and builds lasting economic resilience."
+>
+  <!-- Hero -->
+  <div class="relative py-28 text-white overflow-hidden" style="background: linear-gradient(135deg, #0D5C63 0%, #1A1A2E 100%);">
+    <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-10" style="background-color: #D4A853;" aria-hidden="true"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+        <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Make an Impact</span>
+        <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+      </div>
+      <h1 class="font-heading font-bold text-white mb-5" style="font-size: clamp(2.5rem, 5vw, 4rem);">Give Creativity a Chance</h1>
+      <p class="text-xl text-white/80 leading-relaxed max-w-2xl mx-auto">
+        Your gift powers the programs, people, and communities at the heart of America's creative economy. NACED is a 501(c)(3) nonprofit — your donation is fully tax-deductible.
+      </p>
+    </div>
+  </div>
+
+  <!-- Impact levels -->
+  <section class="py-20" style="background-color: #F7F9F8;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="font-heading text-3xl font-bold" style="color: #1A1A2E;">Your Gift in Action</h2>
+        <p class="text-gray-600 mt-3 max-w-xl mx-auto">See exactly how your contribution makes a difference at every level.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {impactLevels.map((level) => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-teal-primary/30 hover:shadow-md transition-all flex flex-col">
+            <div class="font-heading text-3xl font-bold mb-1" style="color: #D4A853;">{level.amount}</div>
+            <div class="font-semibold text-base mb-3" style="color: #0D5C63;">{level.label}</div>
+            <p class="text-sm text-gray-600 leading-relaxed flex-1">{level.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Donation form / Zeffy embed -->
+  <section id="donate-form" class="py-20 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-10">
+        <h2 class="font-heading text-3xl font-bold mb-3" style="color: #1A1A2E;">Make a Donation</h2>
+        <p class="text-gray-600">Secure, online giving powered by Zeffy — 100% of your donation reaches NACED.</p>
+      </div>
+
+      {zeffyUrl ? (
+        <!-- Zeffy embed -->
+        <div class="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
+          <iframe
+            src={zeffyUrl}
+            title="NACED Donation Form"
+            width="100%"
+            height="700"
+            frameborder="0"
+            allow="payment"
+            class="block"
+          ></iframe>
+        </div>
+      ) : (
+        <!-- Placeholder when Zeffy URL not set -->
+        <div class="rounded-2xl border-2 border-dashed border-gray-200 p-16 text-center">
+          <div class="text-5xl mb-4" aria-hidden="true">💛</div>
+          <h3 class="font-heading text-2xl font-bold mb-3" style="color: #1A1A2E;">Donation Form Coming Soon</h3>
+          <p class="text-gray-600 mb-6 max-w-md mx-auto leading-relaxed">
+            To enable online giving, add your Zeffy donation page URL to the <strong>Site Settings</strong> in the Sanity Studio. The donation form will appear here automatically.
+          </p>
+          <div class="inline-flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="mailto:info@naced.org?subject=Donation Inquiry"
+              class="inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm transition-all hover:opacity-90"
+              style="background-color: #D4A853; color: #1A1A2E;"
+            >
+              Donate by Email
+            </a>
+            <a
+              href="/contact"
+              class="inline-flex items-center justify-center px-6 py-3 rounded-full font-semibold text-sm border-2 transition-all hover:bg-gray-50"
+              style="border-color: #0D5C63; color: #0D5C63;"
+            >
+              Other Ways to Give
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Other ways to give -->
+  <section id="ways-to-give" class="py-20" style="background-color: #F7F9F8;">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="font-heading text-3xl font-bold" style="color: #1A1A2E;">Other Ways to Give</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl mb-3" aria-hidden="true">💼</div>
+          <h3 class="font-heading text-xl font-bold mb-2" style="color: #1A1A2E;">Corporate Partnership</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">Align your brand with creative economic development. Corporate partners receive recognition, impact reports, and engagement opportunities.</p>
+          <a href="/contact?subject=partnership" class="text-sm font-semibold transition-colors" style="color: #0D5C63;">Inquire about partnerships →</a>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl mb-3" aria-hidden="true">📜</div>
+          <h3 class="font-heading text-xl font-bold mb-2" style="color: #1A1A2E;">Planned Giving</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">Leave a legacy that supports creative economies for generations. Include NACED in your estate plan and we'll honor your vision.</p>
+          <a href="/contact?subject=planned-giving" class="text-sm font-semibold transition-colors" style="color: #0D5C63;">Learn about planned giving →</a>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl mb-3" aria-hidden="true">🎁</div>
+          <h3 class="font-heading text-xl font-bold mb-2" style="color: #1A1A2E;">Donate by Mail</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">Make checks payable to <strong>NACED</strong> and mail to: 123 Creative Commons Dr, Suite 200, Chicago, IL 60601.</p>
+          <p class="text-xs text-gray-400">EIN: 00-0000000</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="text-3xl mb-3" aria-hidden="true">🔄</div>
+          <h3 class="font-heading text-xl font-bold mb-2" style="color: #1A1A2E;">Recurring Giving</h3>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">Monthly donors are the backbone of our work. A consistent gift — even $10/month — provides the reliable funding we need to plan ahead.</p>
+          <a href="#donate-form" class="text-sm font-semibold transition-colors" style="color: #0D5C63;">Set up a recurring gift →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tax / transparency note -->
+  <div class="py-10 border-t border-gray-100 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-sm text-gray-500 leading-relaxed">
+        NACED is a 501(c)(3) nonprofit organization. All donations are tax-deductible to the fullest extent permitted by law.
+        Our EIN is 00-0000000. We are committed to full financial transparency — view our <a href="#" class="underline" style="color: #0D5C63;">annual reports and 990s</a>.
+      </p>
+    </div>
+  </div>
+</Layout>

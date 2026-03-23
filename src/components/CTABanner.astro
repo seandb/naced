@@ -1,0 +1,63 @@
+---
+interface Props {
+  heading?: string;
+  subtext?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const {
+  heading = 'Support Our Mission',
+  subtext = 'Your contribution powers creative economies, uplifts artists, and transforms communities across America.',
+  primaryLabel = 'Donate Now',
+  primaryHref = '/donate',
+  secondaryLabel = 'Get Involved',
+  secondaryHref = '/contact',
+} = Astro.props;
+---
+
+<section
+  class="relative overflow-hidden py-20"
+  style="background-color: #0D5C63;"
+  aria-label="Call to action"
+>
+  <!-- Decorative circle accents -->
+  <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-10" style="background-color: #D4A853;" aria-hidden="true"></div>
+  <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full opacity-10" style="background-color: #D4A853;" aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class="inline-flex items-center gap-2 mb-5" aria-hidden="true">
+      <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+      <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Make an Impact</span>
+      <div class="w-8 h-px" style="background-color: #D4A853;"></div>
+    </div>
+
+    <h2 class="font-heading font-bold text-white mb-4" style="font-size: clamp(2rem, 4vw, 3rem);">
+      {heading}
+    </h2>
+    <p class="text-lg text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed">
+      {subtext}
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href={primaryHref}
+        class="inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-base transition-all duration-200 hover:scale-105 hover:shadow-xl"
+        style="background-color: #D4A853; color: #1A1A2E;"
+      >
+        {primaryLabel}
+        <svg class="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </a>
+      <a
+        href={secondaryHref}
+        class="inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold text-base border-2 border-white/40 text-white hover:border-white hover:bg-white/10 transition-all duration-200"
+      >
+        {secondaryLabel}
+      </a>
+    </div>
+  </div>
+</section>

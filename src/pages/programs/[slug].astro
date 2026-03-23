@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import { sanityFetch, urlFor } from '../../lib/sanity';
+import { toHTML } from '@portabletext/to-html';
+
+export async function getStaticPaths() {
+  const programs = await sanityFetch<any[]>(`*[_type == "program"]{ slug }`);
+  if (!programs) return [];
+  return programs.map((p: any) => ({ params: { slug: p.slug.current } }));
+}
+
+const { slug } = Astro.params;
+
+const program = await sanityFetch<any>(`*[_type == "program" && slug.current == $slug][0]{
+  title, slug, tagline, icon, image, description, outcomes
+}`, { slug });
+
+if (!program && import.meta.env.PROD) {
+  return Astro.redirect('/programs', 302);
+}
+
+const descriptionHtml = program?.description ? toHTML(program.description) : null;
+const displayProgram = program || {
+  title: 'Creative Entrepreneur Accelerator',
+  tagline: '12-Week Business Intensive',
+  icon: '🚀',
+  outcomes: ['Business plan development', 'Access to micro-lending', 'Peer network of 20+ creatives', '1:1 mentorship sessions'],
+};
+---
+
+<Layout
+  title={`${displayProgram.title} — NACED Programs`}
+  description={displayProgram.tagline || `Learn about the ${displayProgram.title} program at NACED.`}
+>
+  <!-- Back link -->
+  <div class="py-4 border-b border-gray-100 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <a href="/programs" class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-teal-primary transition-colors" style="--tw-text-opacity: 1;">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        All Programs
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="py-20 text-white" style="background: linear-gradient(135deg, #0D5C63 0%, #1A1A2E 100%);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-5xl mb-5" role="img" aria-label={`${displayProgram.title} icon`}>{displayProgram.icon || '🎨'}</div>
+      <h1 class="font-heading font-bold text-white mb-4" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+        {displayProgram.title}
+      </h1>
+      {displayProgram.tagline && (
+        <p class="text-xl font-medium mb-4" style="color: #D4A853;">{displayProgram.tagline}</p>
+      )}
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-3 gap-12">
+        <!-- Main content -->
+        <div class="lg:col-span-2">
+          {displayProgram.image && (
+            <img
+              src={urlFor(displayProgram.image).width(800).height(450).url()}
+              alt={displayProgram.title}
+              class="w-full rounded-2xl mb-8 shadow-md"
+              loading="eager"
+            />
+          )}
+          {descriptionHtml ? (
+            <div class="prose prose-lg max-w-none" set:html={descriptionHtml} />
+          ) : (
+            <div class="prose prose-lg max-w-none text-gray-700">
+              <p>This program is part of NACED's core offerings for creative entrepreneurs and communities. Detailed program content will appear here once it's entered in the Sanity CMS.</p>
+              <p>In the meantime, <a href="/contact" style="color: #0D5C63;">contact us</a> to learn more about this program and how to apply or get involved.</p>
+            </div>
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+          {displayProgram.outcomes && displayProgram.outcomes.length > 0 && (
+            <div class="bg-light-bg rounded-2xl p-6 mb-6" style="background-color: #F7F9F8;">
+              <h2 class="font-heading text-xl font-bold mb-4" style="color: #1A1A2E;">Program Outcomes</h2>
+              <ul class="space-y-3">
+                {displayProgram.outcomes.map((outcome: string) => (
+                  <li class="flex items-start gap-3 text-sm text-gray-700">
+                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color: #0D5C63;" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {outcome}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div class="rounded-2xl p-6 text-white" style="background-color: #0D5C63;">
+            <h2 class="font-heading text-xl font-bold mb-3 text-white">Get Involved</h2>
+            <p class="text-sm text-white/80 leading-relaxed mb-4">
+              Interested in applying to this program, partnering with NACED, or learning more?
+            </p>
+            <a
+              href="/contact"
+              class="block w-full text-center px-4 py-3 rounded-xl font-semibold text-sm transition-all hover:opacity-90"
+              style="background-color: #D4A853; color: #1A1A2E;"
+            >
+              Contact Us
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <CTABanner
+    heading="Support This Work"
+    subtext="Programs like this one exist because of the generosity of donors and funders who believe in the power of creative economies."
+    primaryLabel="Donate"
+    primaryHref="/donate"
+    secondaryLabel="See All Programs"
+    secondaryHref="/programs"
+  />
+</Layout>

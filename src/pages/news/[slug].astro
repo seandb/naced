@@ -1,0 +1,163 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import { sanityFetch, urlFor } from '../../lib/sanity';
+import { toHTML } from '@portabletext/to-html';
+
+export async function getStaticPaths() {
+  const posts = await sanityFetch<any[]>(`*[_type == "post"]{ slug }`);
+  if (!posts) return [];
+  return posts.map((p: any) => ({ params: { slug: p.slug.current } }));
+}
+
+const { slug } = Astro.params;
+
+const post = await sanityFetch<any>(`*[_type == "post" && slug.current == $slug][0]{
+  title, slug, publishedAt, author, category, excerpt, mainImage, body
+}`, { slug });
+
+if (!post && import.meta.env.PROD) {
+  return Astro.redirect('/news', 302);
+}
+
+const bodyHtml = post?.body ? toHTML(post.body) : null;
+
+const formattedDate = post?.publishedAt
+  ? new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  : '';
+
+const displayPost = post || {
+  title: 'News Article',
+  category: 'News',
+  publishedAt: new Date().toISOString(),
+};
+
+const categoryColors: Record<string, { bg: string; text: string }> = {
+  News: { bg: '#E8F5F6', text: '#0D5C63' },
+  Story: { bg: '#FEF9EC', text: '#B8922A' },
+  Report: { bg: '#F3F0FF', text: '#5B21B6' },
+  Announcement: { bg: '#FFF0F0', text: '#B91C1C' },
+  'Press Release': { bg: '#F0FFF4', text: '#065F46' },
+};
+const catStyle = displayPost.category
+  ? (categoryColors[displayPost.category] || { bg: '#F3F4F6', text: '#374151' })
+  : { bg: '#F3F4F6', text: '#374151' };
+---
+
+<Layout
+  title={`${displayPost.title} — NACED News`}
+  description={post?.excerpt || `Read ${displayPost.title} on the NACED news blog.`}
+  image={post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : undefined}
+>
+  <!-- Back link -->
+  <div class="py-4 border-b border-gray-100 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <a href="/news" class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        News & Stories
+      </a>
+    </div>
+  </div>
+
+  <!-- Article header -->
+  <header class="py-16 bg-white border-b border-gray-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Category + date -->
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        {displayPost.category && (
+          <span
+            class="text-xs font-semibold px-3 py-1.5 rounded-full"
+            style={`background-color: ${catStyle.bg}; color: ${catStyle.text};`}
+          >
+            {displayPost.category}
+          </span>
+        )}
+        {formattedDate && (
+          <time dateTime={post?.publishedAt} class="text-sm text-gray-400">{formattedDate}</time>
+        )}
+        {displayPost.author && (
+          <span class="text-sm text-gray-400">By <strong class="text-gray-700">{displayPost.author}</strong></span>
+        )}
+      </div>
+
+      <h1 class="font-heading font-bold leading-tight mb-6" style="font-size: clamp(2rem, 4vw, 3.25rem); color: #1A1A2E; line-height: 1.15;">
+        {displayPost.title}
+      </h1>
+
+      {post?.excerpt && (
+        <p class="text-xl text-gray-600 leading-relaxed">{post.excerpt}</p>
+      )}
+    </div>
+  </header>
+
+  <!-- Featured image -->
+  {post?.mainImage && (
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 mb-0">
+      <img
+        src={urlFor(post.mainImage).width(1000).height(560).url()}
+        alt={displayPost.title}
+        class="w-full rounded-2xl shadow-xl"
+        loading="eager"
+      />
+    </div>
+  )}
+
+  <!-- Article body -->
+  <article class="py-16 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      {bodyHtml ? (
+        <div class="prose prose-lg max-w-none" set:html={bodyHtml} />
+      ) : (
+        <div class="prose prose-lg max-w-none text-gray-700">
+          <p>This article's content will appear here once it's entered in the Sanity CMS. Return to <a href="/news" style="color: #0D5C63;">all news</a> to browse other stories.</p>
+        </div>
+      )}
+
+      <!-- Share / tags -->
+      <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          {displayPost.category && (
+            <span
+              class="text-xs font-semibold px-3 py-1.5 rounded-full"
+              style={`background-color: ${catStyle.bg}; color: ${catStyle.text};`}
+            >
+              {displayPost.category}
+            </span>
+          )}
+        </div>
+        <div class="flex items-center gap-3 text-sm text-gray-500">
+          <span>Share:</span>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(displayPost.title)}&url=${encodeURIComponent(Astro.url.href)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium hover:text-gray-900 transition-colors"
+            aria-label="Share on Twitter"
+          >
+            Twitter
+          </a>
+          <a
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(Astro.url.href)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium hover:text-gray-900 transition-colors"
+            aria-label="Share on LinkedIn"
+          >
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <CTABanner
+    heading="Stories Like This Need Your Support"
+    subtext="Behind every story we publish is a program that changed someone's life. Help us do more of this work."
+    primaryLabel="Support NACED"
+    primaryHref="/donate"
+    secondaryLabel="More Stories"
+    secondaryHref="/news"
+  />
+</Layout>

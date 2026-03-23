@@ -1,0 +1,182 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import { sanityFetch, urlFor } from '../../lib/sanity';
+import { toHTML } from '@portabletext/to-html';
+
+export async function getStaticPaths() {
+  const events = await sanityFetch<any[]>(`*[_type == "event"]{ slug }`);
+  if (!events) return [];
+  return events.map((e: any) => ({ params: { slug: e.slug.current } }));
+}
+
+const { slug } = Astro.params;
+
+const event = await sanityFetch<any>(`*[_type == "event" && slug.current == $slug][0]{
+  title, slug, date, endDate, location, category, image, description, registrationUrl
+}`, { slug });
+
+if (!event && import.meta.env.PROD) {
+  return Astro.redirect('/events', 302);
+}
+
+const descriptionHtml = event?.description ? toHTML(event.description) : null;
+
+const eventDate = event ? new Date(event.date) : null;
+const formattedDate = eventDate
+  ? eventDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+  : '';
+const formattedTime = eventDate
+  ? eventDate.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' })
+  : '';
+
+const displayEvent = event || {
+  title: 'Creative Economy Summit 2026',
+  date: '2026-05-14T09:00:00Z',
+  location: 'Chicago, IL',
+  category: 'Conference',
+  registrationUrl: '#',
+};
+
+const categoryColors: Record<string, string> = {
+  Workshop: 'bg-blue-100 text-blue-800',
+  Conference: 'bg-purple-100 text-purple-800',
+  Webinar: 'bg-green-100 text-green-800',
+  Community: 'bg-orange-100 text-orange-800',
+};
+const badgeClass = displayEvent.category ? (categoryColors[displayEvent.category] || 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700';
+---
+
+<Layout
+  title={`${displayEvent.title} — NACED Events`}
+  description={`Join us for ${displayEvent.title}${displayEvent.location ? ` in ${displayEvent.location}` : ''}.`}
+>
+  <!-- Back link -->
+  <div class="py-4 border-b border-gray-100 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <a href="/events" class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        All Events
+      </a>
+    </div>
+  </div>
+
+  <!-- Event header -->
+  <div class="py-20" style="background: linear-gradient(135deg, #1A1A2E 0%, #0D5C63 100%);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      {displayEvent.category && (
+        <span class={`inline-block text-xs font-semibold px-3 py-1.5 rounded-full mb-4 ${badgeClass}`}>
+          {displayEvent.category}
+        </span>
+      )}
+      <h1 class="font-heading font-bold text-white mb-6" style="font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1;">
+        {displayEvent.title}
+      </h1>
+      <div class="flex flex-wrap gap-5 text-white/80 text-sm">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" style="color: #D4A853;" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          {formattedDate}
+        </span>
+        {formattedTime && (
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" style="color: #D4A853;" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {formattedTime}
+          </span>
+        )}
+        {displayEvent.location && (
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4" style="color: #D4A853;" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            {displayEvent.location}
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-3 gap-12">
+        <!-- Main content -->
+        <div class="lg:col-span-2">
+          {event?.image && (
+            <img
+              src={urlFor(event.image).width(800).height(450).url()}
+              alt={displayEvent.title}
+              class="w-full rounded-2xl mb-8 shadow-md"
+              loading="eager"
+            />
+          )}
+          {descriptionHtml ? (
+            <div class="prose prose-lg max-w-none" set:html={descriptionHtml} />
+          ) : (
+            <div class="prose prose-lg max-w-none text-gray-700">
+              <p>Event details will appear here once entered in the Sanity CMS. In the meantime, register now to secure your spot or contact us for more information.</p>
+            </div>
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-1">
+          <div class="rounded-2xl p-6 sticky top-24" style="background-color: #F7F9F8;">
+            <h2 class="font-heading text-xl font-bold mb-5" style="color: #1A1A2E;">Event Details</h2>
+            <dl class="space-y-4 text-sm mb-6">
+              <div>
+                <dt class="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-1">Date</dt>
+                <dd class="text-gray-800">{formattedDate || 'TBA'}</dd>
+              </div>
+              {formattedTime && (
+                <div>
+                  <dt class="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-1">Time</dt>
+                  <dd class="text-gray-800">{formattedTime}</dd>
+                </div>
+              )}
+              {displayEvent.location && (
+                <div>
+                  <dt class="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-1">Location</dt>
+                  <dd class="text-gray-800">{displayEvent.location}</dd>
+                </div>
+              )}
+              {displayEvent.category && (
+                <div>
+                  <dt class="font-semibold text-xs uppercase tracking-wider text-gray-400 mb-1">Type</dt>
+                  <dd><span class={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${badgeClass}`}>{displayEvent.category}</span></dd>
+                </div>
+              )}
+            </dl>
+
+            {displayEvent.registrationUrl && (
+              <a
+                href={displayEvent.registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block w-full text-center px-4 py-3 rounded-xl font-semibold text-sm transition-all hover:opacity-90"
+                style="background-color: #D4A853; color: #1A1A2E;"
+              >
+                Register Now →
+              </a>
+            )}
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <CTABanner
+    heading="Support Our Programs"
+    subtext="Events like this are made possible by NACED supporters. Your gift helps us keep costs low and access high."
+    primaryLabel="Donate"
+    primaryHref="/donate"
+    secondaryLabel="More Events"
+    secondaryHref="/events"
+  />
+</Layout>

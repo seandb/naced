@@ -1,0 +1,51 @@
+---
+interface Stat {
+  number: string;
+  label: string;
+}
+
+interface Props {
+  stats?: Stat[];
+}
+
+const { stats = [] } = Astro.props;
+
+const defaultStats: Stat[] = [
+  { number: '1,200+', label: 'Artists & Makers Supported' },
+  { number: '48', label: 'Communities Served' },
+  { number: '$8.4M', label: 'Economic Impact Generated' },
+  { number: '15 yrs', label: 'Advancing Creative Economies' },
+];
+
+const displayStats = stats.length > 0 ? stats : defaultStats;
+---
+
+<section
+  class="py-16"
+  style="background-color: #0D5C63;"
+  aria-label="Impact statistics"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+      {displayStats.map((stat, i) => (
+        <div
+          class="text-center relative"
+        >
+          {/* Divider between stats (desktop) */}
+          {i > 0 && (
+            <div class="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-16 bg-white/20" aria-hidden="true"></div>
+          )}
+          <div
+            class="font-heading font-bold mb-2 leading-none"
+            style="font-size: clamp(2rem, 4vw, 3.25rem); color: #D4A853;"
+          >
+            {stat.number}
+          </div>
+          <div class="text-sm sm:text-base text-white/80 font-medium leading-snug max-w-[140px] mx-auto">
+            {stat.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

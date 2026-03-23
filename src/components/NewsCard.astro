@@ -1,0 +1,90 @@
+---
+interface Props {
+  title: string;
+  excerpt?: string;
+  category?: string;
+  publishedAt?: string;
+  author?: string;
+  slug: string;
+  imageUrl?: string;
+  featured?: boolean;
+}
+
+const { title, excerpt, category, publishedAt, author, slug, imageUrl, featured } = Astro.props;
+
+const date = publishedAt
+  ? new Date(publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  : '';
+
+const categoryColors: Record<string, { bg: string; text: string }> = {
+  News: { bg: '#E8F5F6', text: '#0D5C63' },
+  Story: { bg: '#FEF9EC', text: '#B8922A' },
+  Report: { bg: '#F3F0FF', text: '#5B21B6' },
+  Announcement: { bg: '#FFF0F0', text: '#B91C1C' },
+  'Press Release': { bg: '#F0FFF4', text: '#065F46' },
+};
+const catStyle = category ? (categoryColors[category] || { bg: '#F3F4F6', text: '#374151' }) : { bg: '#F3F4F6', text: '#374151' };
+---
+
+<article class={`group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col ${featured ? 'ring-2 ring-offset-2' : ''}`} style={featured ? 'ring-color: #D4A853;' : ''}>
+  <!-- Image -->
+  <a href={`/news/${slug}`} class="block aspect-video overflow-hidden bg-gray-100" aria-label={`Read: ${title}`} tabindex="-1">
+    {imageUrl ? (
+      <img
+        src={imageUrl}
+        alt={title}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        loading="lazy"
+        decoding="async"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, #0D5C63 0%, #094A50 100%);">
+        <svg class="w-12 h-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+      </div>
+    )}
+  </a>
+
+  <div class="p-6 flex flex-col flex-1">
+    <!-- Meta row -->
+    <div class="flex items-center gap-3 mb-3">
+      {category && (
+        <span
+          class="text-xs font-semibold px-2.5 py-1 rounded-full"
+          style={`background-color: ${catStyle.bg}; color: ${catStyle.text};`}
+        >
+          {category}
+        </span>
+      )}
+      {date && (
+        <time dateTime={publishedAt} class="text-xs text-gray-400">{date}</time>
+      )}
+      {featured && (
+        <span class="ml-auto text-xs font-semibold px-2 py-0.5 rounded" style="background-color: #D4A853; color: #1A1A2E;">Featured</span>
+      )}
+    </div>
+
+    <h3 class="font-heading text-xl font-bold leading-snug mb-2 group-hover:text-teal-primary transition-colors" style="color: #1A1A2E;">
+      <a href={`/news/${slug}`} class="hover:underline">
+        {title}
+      </a>
+    </h3>
+
+    {excerpt && (
+      <p class="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-4 flex-1">{excerpt}</p>
+    )}
+
+    <div class="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
+      {author && <span class="text-xs text-gray-400">By {author}</span>}
+      <a
+        href={`/news/${slug}`}
+        class="text-sm font-semibold transition-colors ml-auto"
+        style="color: #0D5C63;"
+        aria-label={`Read full article: ${title}`}
+      >
+        Read more →
+      </a>
+    </div>
+  </div>
+</article>

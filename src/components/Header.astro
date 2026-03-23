@@ -1,0 +1,128 @@
+---
+const navItems = [
+  { label: 'About', href: '/about' },
+  { label: 'Programs', href: '/programs' },
+  { label: 'Events', href: '/events' },
+  { label: 'News', href: '/news' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm" role="banner">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-18 py-3">
+
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 group" aria-label="NACED home">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #0D5C63;">
+          <span class="text-white font-heading font-bold text-lg leading-none">N</span>
+        </div>
+        <div class="leading-tight">
+          <div class="font-heading font-bold text-xl" style="color: #1A1A2E;">NACED</div>
+          <div class="text-xs text-gray-500 hidden sm:block tracking-wide">Creative Economic Development</div>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-1" aria-label="Primary navigation">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150 ${
+              currentPath === item.href || currentPath.startsWith(item.href + '/')
+                ? 'text-white'
+                : 'text-gray-700 hover:text-white hover:bg-teal-primary'
+            }`}
+            style={
+              currentPath === item.href || currentPath.startsWith(item.href + '/')
+                ? 'background-color: #0D5C63; color: white;'
+                : ''
+            }
+            aria-current={currentPath === item.href ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Desktop CTA -->
+      <div class="hidden md:flex items-center gap-3">
+        <a
+          href="/donate"
+          class="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-150 hover:shadow-md hover:scale-105"
+          style="background-color: #D4A853; color: #1A1A2E;"
+        >
+          Donate
+        </a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg id="hamburger-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden border-t border-gray-100 bg-white"
+    role="navigation"
+    aria-label="Mobile navigation"
+  >
+    <div class="px-4 py-4 space-y-1">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            currentPath === item.href
+              ? 'text-white'
+              : 'text-gray-700 hover:bg-gray-50'
+          }`}
+          style={currentPath === item.href ? 'background-color: #0D5C63; color: white;' : ''}
+        >
+          {item.label}
+        </a>
+      ))}
+      <div class="pt-3 border-t border-gray-100">
+        <a
+          href="/donate"
+          class="block w-full text-center px-4 py-3 rounded-full text-sm font-semibold"
+          style="background-color: #D4A853; color: #1A1A2E;"
+        >
+          Donate Now
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  if (btn && menu) {
+    btn.addEventListener('click', () => {
+      const isOpen = !menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', isOpen);
+      btn.setAttribute('aria-expanded', String(!isOpen));
+      hamburgerIcon?.classList.toggle('hidden', !isOpen);
+      closeIcon?.classList.toggle('hidden', isOpen);
+    });
+  }
+</script>

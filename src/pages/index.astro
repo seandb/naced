@@ -1,0 +1,237 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ImpactStats from '../components/ImpactStats.astro';
+import ProgramCard from '../components/ProgramCard.astro';
+import EventCard from '../components/EventCard.astro';
+import NewsCard from '../components/NewsCard.astro';
+import CTABanner from '../components/CTABanner.astro';
+import { sanityFetch, urlFor } from '../lib/sanity';
+
+// Fetch homepage data
+const homeData = await sanityFetch<any>(`*[_type == "homePage"][0]{
+  hero,
+  impactStats,
+  "featuredPrograms": featuredPrograms[]->{
+    _id, title, slug, tagline, icon, image, "description": pt::text(description)
+  },
+  "featuredPost": featuredPost->{
+    _id, title, slug, excerpt, category, publishedAt, author, mainImage
+  }
+}`);
+
+// Fetch upcoming events
+const events = await sanityFetch<any[]>(`*[_type == "event" && date > now()] | order(date asc) [0...3]{
+  _id, title, slug, date, endDate, location, category, registrationUrl
+}`);
+
+// Fetch latest news
+const posts = await sanityFetch<any[]>(`*[_type == "post"] | order(publishedAt desc) [0...3]{
+  _id, title, slug, excerpt, category, publishedAt, author, mainImage, featured
+}`);
+
+// Fallback content
+const hero = homeData?.hero;
+const stats = homeData?.impactStats;
+const programs = homeData?.featuredPrograms || [];
+const featuredPost = homeData?.featuredPost;
+
+const fallbackPrograms = [
+  { _id: '1', title: 'Creative Entrepreneur Accelerator', tagline: 'Business Skills for Artists', icon: '🚀', slug: { current: 'creative-entrepreneur-accelerator' }, description: 'A 12-week intensive program equipping artists and makers with the business skills to turn their creative practice into a sustainable livelihood.' },
+  { _id: '2', title: 'Community Cultural Planning', tagline: 'Policy Meets Place', icon: '🏘️', slug: { current: 'community-cultural-planning' }, description: 'We partner with cities and towns to develop cultural master plans that recognize and amplify local creative assets.' },
+  { _id: '3', title: 'Creative Placemaking Grants', tagline: 'Art That Transforms Space', icon: '🎭', slug: { current: 'creative-placemaking-grants' }, description: 'Seed funding for public art, cultural districts, and creative reuse projects that transform underutilized spaces into community anchors.' },
+];
+
+const fallbackEvents = [
+  { _id: 'e1', title: 'Creative Economy Summit 2026', date: '2026-05-14T09:00:00Z', location: 'Chicago, IL', category: 'Conference', slug: { current: 'creative-economy-summit-2026' }, registrationUrl: '#' },
+  { _id: 'e2', title: 'Grant Writing Workshop for Artists', date: '2026-04-08T18:00:00Z', location: 'Online / Zoom', category: 'Workshop', slug: { current: 'grant-writing-workshop' }, registrationUrl: '#' },
+  { _id: 'e3', title: 'Cultural District Webinar Series', date: '2026-04-22T14:00:00Z', location: 'Online / Zoom', category: 'Webinar', slug: { current: 'cultural-district-webinar' }, registrationUrl: '#' },
+];
+
+const fallbackPosts = [
+  { _id: 'p1', title: 'How Creative Districts Are Revitalizing Rust Belt Cities', excerpt: 'Five years into our partnership with three Midwestern cities, the data is clear: investing in arts infrastructure pays dividends far beyond the cultural sector.', category: 'Report', publishedAt: '2026-03-10T00:00:00Z', author: 'Maria Chen', slug: { current: 'creative-districts-rust-belt' } },
+  { _id: 'p2', title: 'Meet Jamal: From Food Truck to Brick-and-Mortar', excerpt: 'Through NACED\'s Accelerator program, chef and entrepreneur Jamal Washington built the business acumen to open his first restaurant — and he\'s not stopping there.', category: 'Story', publishedAt: '2026-02-25T00:00:00Z', author: 'Lisa Park', slug: { current: 'meet-jamal-food-truck' } },
+  { _id: 'p3', title: 'NACED Releases 2025 State of Creative Economies Report', excerpt: 'Our flagship annual report documents the health of creative economies across 48 communities, revealing both encouraging trends and persistent challenges.', category: 'Announcement', publishedAt: '2026-02-01T00:00:00Z', author: 'NACED Staff', slug: { current: 'state-of-creative-economies-2025' } },
+];
+
+const displayPrograms = programs.length > 0 ? programs : fallbackPrograms;
+const displayEvents = (events && events.length > 0) ? events : fallbackEvents;
+const displayPosts = (posts && posts.length > 0) ? posts : fallbackPosts;
+---
+
+<Layout
+  title="NACED — Advancing Creative Economic Development"
+  description="NACED brings together artists, entrepreneurs, and community leaders to build thriving local economies powered by creativity and culture."
+>
+  <!-- Hero -->
+  <Hero
+    heading={hero?.heading || 'Fueling Creative Economies Across America'}
+    subheading={hero?.subheading || 'NACED brings together artists, entrepreneurs, policymakers, and community leaders to build thriving local economies powered by creativity and culture.'}
+    imageUrl={hero?.image ? urlFor(hero.image).width(1920).height(1080).url() : undefined}
+    primaryCta={hero?.primaryCta || { label: 'Explore Our Programs', href: '/programs' }}
+    secondaryCta={hero?.secondaryCta || { label: 'Our Impact Story', href: '/about' }}
+    eyebrow="Making an Impact Since 2010"
+  />
+
+  <!-- Impact Stats -->
+  <ImpactStats stats={stats || []} />
+
+  <!-- Mission teaser -->
+  <section class="py-20" style="background-color: #F7F9F8;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 mb-5">
+            <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+            <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Our Mission</span>
+          </div>
+          <h2 class="font-heading font-bold mb-6" style="font-size: clamp(2rem, 3vw, 2.75rem); color: #1A1A2E; line-height: 1.15;">
+            We believe creativity is an <em class="not-italic" style="color: #0D5C63;">economic engine</em>, not just an amenity.
+          </h2>
+          <p class="text-lg text-gray-600 leading-relaxed mb-6">
+            For fifteen years, NACED has been at the intersection of arts and economics — helping communities recognize, develop, and sustain the creative assets that make them unique and economically resilient.
+          </p>
+          <p class="text-gray-600 leading-relaxed mb-8">
+            From small-town cultural districts to urban maker hubs, we provide the research, training, and funding that turns creative potential into lasting prosperity.
+          </p>
+          <a
+            href="/about"
+            class="inline-flex items-center gap-2 font-semibold text-base transition-all hover:gap-3"
+            style="color: #0D5C63;"
+          >
+            Learn about our story
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+        <div class="relative">
+          <!-- Pull quote / testimonial -->
+          <blockquote class="relative bg-white rounded-3xl p-8 shadow-lg border-l-4" style="border-color: #D4A853;">
+            <svg class="w-8 h-8 mb-4 opacity-30" style="color: #D4A853;" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+            </svg>
+            <p class="font-heading text-xl font-semibold leading-relaxed mb-6" style="color: #1A1A2E;">
+              "NACED's accelerator gave me the language and tools to talk to investors and city officials about what I was already doing intuitively. It changed everything."
+            </p>
+            <footer class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-heading font-bold" style="background-color: #0D5C63;">
+                T
+              </div>
+              <div>
+                <div class="font-semibold text-sm" style="color: #1A1A2E;">Tanya Williams</div>
+                <div class="text-xs text-gray-500">Ceramic artist & studio owner, Detroit</div>
+              </div>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Programs -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <div class="inline-flex items-center gap-2 mb-3">
+            <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+            <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">What We Do</span>
+          </div>
+          <h2 class="font-heading font-bold" style="font-size: clamp(1.75rem, 3vw, 2.5rem); color: #1A1A2E;">Our Programs</h2>
+        </div>
+        <a href="/programs" class="text-sm font-semibold whitespace-nowrap transition-colors" style="color: #0D5C63;">
+          View all programs →
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {displayPrograms.map((program: any) => (
+          <ProgramCard
+            title={program.title}
+            tagline={program.tagline}
+            description={program.description}
+            icon={program.icon || '🎨'}
+            slug={program.slug?.current || program.slug}
+            imageUrl={program.image ? urlFor(program.image).width(600).height(340).url() : undefined}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Events -->
+  <section class="py-20" style="background-color: #F7F9F8;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <div class="inline-flex items-center gap-2 mb-3">
+            <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+            <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">Upcoming</span>
+          </div>
+          <h2 class="font-heading font-bold" style="font-size: clamp(1.75rem, 3vw, 2.5rem); color: #1A1A2E;">Events</h2>
+        </div>
+        <a href="/events" class="text-sm font-semibold whitespace-nowrap transition-colors" style="color: #0D5C63;">
+          All events →
+        </a>
+      </div>
+
+      <div class="space-y-4">
+        {displayEvents.map((event: any) => (
+          <EventCard
+            title={event.title}
+            date={event.date}
+            endDate={event.endDate}
+            location={event.location}
+            category={event.category}
+            slug={event.slug?.current || event.slug}
+            registrationUrl={event.registrationUrl}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest News -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <div class="inline-flex items-center gap-2 mb-3">
+            <div class="w-8 h-px" style="background-color: #D4A853;" aria-hidden="true"></div>
+            <span class="text-xs font-semibold uppercase tracking-[0.2em]" style="color: #D4A853;">From the Field</span>
+          </div>
+          <h2 class="font-heading font-bold" style="font-size: clamp(1.75rem, 3vw, 2.5rem); color: #1A1A2E;">News & Stories</h2>
+        </div>
+        <a href="/news" class="text-sm font-semibold whitespace-nowrap transition-colors" style="color: #0D5C63;">
+          All news →
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {displayPosts.map((post: any) => (
+          <NewsCard
+            title={post.title}
+            excerpt={post.excerpt}
+            category={post.category}
+            publishedAt={post.publishedAt}
+            author={post.author}
+            slug={post.slug?.current || post.slug}
+            imageUrl={post.mainImage ? urlFor(post.mainImage).width(600).height(340).url() : undefined}
+            featured={post.featured}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Donation CTA -->
+  <CTABanner
+    heading="Your Gift Transforms Communities"
+    subtext="Every dollar you give goes directly to programs that empower creative entrepreneurs, fund public art, and help cities build economies where creativity thrives."
+    primaryLabel="Donate Today"
+    primaryHref="/donate"
+    secondaryLabel="Other Ways to Give"
+    secondaryHref="/donate#ways-to-give"
+  />
+</Layout>
