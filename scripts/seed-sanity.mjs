@@ -19,9 +19,11 @@ const siteSettings = {
   _type: 'siteSettings',
   siteName: 'NACED',
   tagline: 'Advancing Creative Economic Development',
-  contactEmail: 'info@naced.org',
-  contactPhone: '(312) 555-0192',
-  address: '150 N. Michigan Ave, Suite 2800\nChicago, IL 60601',
+  contactInfo: {
+    email: 'info@naced.org',
+    phone: '(312) 555-0192',
+    address: '150 N. Michigan Ave, Suite 2800\nChicago, IL 60601',
+  },
   socialLinks: {
     twitter: 'https://twitter.com/nacedorg',
     linkedin: 'https://linkedin.com/company/naced',
